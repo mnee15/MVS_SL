@@ -7,8 +7,8 @@ camera_nums = [4, 7];
 
 % 경로 바꾸기
 root_dir = "C:/Users/USER/Desktop/mvs_data";
-data_date = "20250617_studio_data";
-object = "20250617_5mp_obj0_corrected_renamed_final";
+data_date = "250617_studio_data";
+object = "250617_plane_sinu";
 calib_path = "250324_studio_data/20250324_SL_camera_calib/params";
 
 cam1_num = 7; cam2_num = 4;
@@ -198,7 +198,7 @@ figure
 pcshow(pc)
 colormap("jet")
 
-pcwrite(pc, sprintf("./cam%d_%d_world.ply", cam1_num, cam2_num));
+% pcwrite(pc, sprintf("./cam%d_%d_world.ply", cam1_num, cam2_num));
 
 %% Depth map
 % Extract intrinsic parameters
