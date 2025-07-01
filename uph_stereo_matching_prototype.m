@@ -50,8 +50,8 @@ stereoParams = stereoParameters(cameraParams1, cameraParams2, R', T);
 uph1_dir = sprintf("%s/%s/%s/cam%02d", root_dir, data_date, object, cam1_num);
 uph2_dir = sprintf("%s/%s/%s/cam%02d", root_dir, data_date, object, cam2_num);
 
-[uph1, mask1] = unwrapThreeFrequency2(uph1_dir, pitch, height, width, NStep);
-[uph2, mask2] = unwrapThreeFrequency2(uph2_dir, pitch, height, width, NStep);
+[uph1, mask1] = unwrapThreeFrequency(uph1_dir, pitch, height, width, NStep);
+[uph2, mask2] = unwrapThreeFrequency(uph2_dir, pitch, height, width, NStep);
 
 % if masking
 
