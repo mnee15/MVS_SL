@@ -4,7 +4,11 @@ close all
 addpath(genpath('src/'))
 
 ref_cam = 2;
-src_cams = [0, 1, 3, 4, 5, 6, 7, 8];
+% src_cams = [0, 1, 3, 4, 5, 6, 7, 8];
+src_cams = [0, 1, 3, 4];
+
+ref_cam = 7;
+src_cams = [6, 5, 4, 8];
 
 % 경로 바꾸기
 root_dir = "C:/Users/USER/Desktop/mvs_data";
@@ -44,44 +48,13 @@ for i=1:length(src_cams)
     Rt_srcs(:,:,i) = Rt_src;
 end
 
-%%
+%% cost volume
 depth_hypothesis = linspace(2200, 2500, 200);
 cost_volume = phase_based_cost_volume(uph_ref, uphs_src, K_ref, K_srcs, Rt_ref, Rt_srcs, depth_hypothesis);
+% cost_volume = phase_based_cost_volume2(uph_ref, uphs_src, K_ref, K_srcs, Rt_ref, Rt_srcs, depth_hypothesis);
 
-%%
-depth_map = zeros(H,W);
-
-for y=1:H
-    for x=1:W
-        if mask_ref(y,x) == 0
-            depth_map(y,x) = 0;
-            continue
-        end
-
-        cost = squeeze(cost_volume(y,x,:));
-        [~, min_d_idx] = min(cost);
-        
-        if min_d_idx == 1 || min_d_idx == length(depth_hypothesis)
-            depth_map(y,x) = depth_hypothesis(min_d_idx);
-            continue
-        end
-
-        c1 = cost(min_d_idx - 1);
-        c2 = cost(min_d_idx);
-        c3 = cost(min_d_idx + 1);
-
-        denom = c1 - 2*c2 + c3;
-        if abs(denom) < 1e-5
-            delta = 0;
-        else
-            delta = 0.5 * (c1 - c3) / denom;
-        end
-
-        refined_depth = depth_hypothesis(min_d_idx) + delta * (depth_hypothesis(min_d_idx + 1) - depth_hypothesis(min_d_idx));
-        depth_map(y,x) = refined_depth;
-    end
-end
-
+%% depth map
+depth_map = costVolume2depth(cost_volume, depth_hypothesis, mask_ref, H, W);
 
 %% depth to pointcloud
 pc = depth2pc(depth_map, K_ref);
@@ -102,6 +75,6 @@ pc_world = pointCloud(pc_world(:,1:3));
 figure
 pcshow(pc_world)
 colormap("jet")
-clim([2350, 2500])
+% clim([2350, 2500])
 
 % pcwrite(pc_world, "SL_247.ply")
